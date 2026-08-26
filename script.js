@@ -192,5 +192,5 @@
   $("calculator-form").addEventListener("submit",e=>{e.preventDefault();calculate();});
   document.querySelectorAll('input[name="mode"]').forEach(x=>x.addEventListener("change",updateMode));
   inputs.forEach(id=>$(id).addEventListener("input",()=>{clearTimeout($(id)._timer);$(id)._timer=setTimeout(calculate,250);}));
-  $("reset").addEventListener("click",()=>{localStorage.removeItem(stateKey); $("calculator-form").reset(); $("core-id").value=76; $("thickness").value=45; $("width").value=425; $("gsm").value=30; $("length").value=10000; updateMode();});
+  $("btn-reset").addEventListener("click",()=>{localStorage.removeItem(stateKey);inputs.forEach(id=>{clearTimeout($(id)._timer);});$("calculator-form").reset();$("core-id").value=76;$("thickness").value=45;$("width").value=425;$("gsm").value=30;$("length").value=10000;$("od").value=760.7;$("form-error").textContent="";updateMode();});
 })();
