@@ -59,6 +59,9 @@
       err_length: "Please enter a positive roll length.",
       err_od: "Roll OD must be larger than the core ID.",
       lang_label: "中文",
+      footer_copy: "\u00a9 2026 Paper Roll Calculator",
+      footer_linkedin: "LinkedIn",
+      footer_email: "Email",
     },
     zh: {
       title: "纸卷计算器",
@@ -112,6 +115,9 @@
       err_length: "请输入正的纸卷长度。",
       err_od: "纸卷外径必须大于纸芯内径。",
       lang_label: "EN",
+      footer_copy: "\u00a9 2026 \u7eb8\u5377\u8ba1\u7b97\u5668",
+      footer_linkedin: "LinkedIn",
+      footer_email: "\u90ae\u7bb1",
     },
   };
 
