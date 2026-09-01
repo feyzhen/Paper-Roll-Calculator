@@ -34,8 +34,8 @@
       result_note: "Weight excludes the paper core and packaging. Actual production values can vary with winding tension and paper compression.",
       visual_title: "Roll cross-section",
       visual_desc: "Schematic view only; dimensions update with your current calculation.",
-      legend_paper: "Kraft paper web",
-      legend_core: "White paper core",
+      legend_paper: "Paper Roll",
+      legend_core: "Paper Core",
       fig_cross: "Cross section",
       fig_side: "Side view",
       compare_title: "OD reference",
@@ -45,7 +45,7 @@
       th_weight: "Estimated paper weight",
       svg_roll_od: "ROLL OD",
       svg_roll_width: "ROLL WIDTH",
-      svg_kraft_paper: "KRAFT PAPER ROLL",
+      svg_kraft_paper: "PAPER CORE",
       svg_core_id: "CORE ID",
       svg_od_half: "OD/2",
       svg_id_half: "ID/2",
@@ -101,7 +101,7 @@
       th_weight: "估算纸张重量",
       svg_roll_od: "纸卷外径",
       svg_roll_width: "纸卷宽度",
-      svg_kraft_paper: "牛皮纸卷",
+      svg_kraft_paper: "纸卷纸芯",
       svg_core_id: "纸芯内径",
       svg_od_half: "外径/2",
       svg_id_half: "内径/2",
@@ -147,7 +147,7 @@
     const bodyW = Math.max(135, Math.min(240, (width / max) * 220));
     const cx = 164, cy = 137, x2 = cx + bodyW;
     const paperLines = Array.from({ length: 7 }, (_, i) => `<ellipse cx="${cx + bodyW * .48}" cy="${cy}" rx="${rollR - 7 - i * 4}" ry="${rollR - 10 - i * 4}" fill="none" stroke="#a66f3a" stroke-opacity="${.25 - i * .02}" stroke-width="1"/>`).join("");
-    return `<svg viewBox="0 0 420 300" role="img" aria-label="Side view of kraft paper roll with dimensions">
+    return `<svg viewBox="0 0 420 300" role="img" aria-label="Side view of paper roll with dimensions">
       <defs><linearGradient id="kraft-side" x1="0" x2="1"><stop stop-color="#8d572b"/><stop offset=".18" stop-color="#d6a466"/><stop offset=".56" stop-color="#be8041"/><stop offset="1" stop-color="#8a5228"/></linearGradient><linearGradient id="core-side" x1="0" x2="1"><stop stop-color="#fdfcf9"/><stop offset=".48" stop-color="#e4e3dd"/><stop offset="1" stop-color="#fbfaf7"/></linearGradient><marker id="arrow-side" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#48515c"/></marker><marker id="arrow-red" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#b23434"/></marker></defs>
       <rect x="${cx}" y="${cy-rollR}" width="${bodyW}" height="${rollR*2}" rx="4" fill="url(#kraft-side)"/>
       ${paperLines}
@@ -156,9 +156,9 @@
       <ellipse cx="${cx}" cy="${cy}" rx="${coreR*.25}" ry="${coreR}" fill="url(#core-side)" stroke="#655345" stroke-width="1.5"/>
       <ellipse cx="${cx}" cy="${cy}" rx="${Math.max(4,coreR*.12)}" ry="${Math.max(11,coreR*.48)}" fill="#3d342d"/>
       <rect x="${cx-3}" y="${cy-6}" width="${bodyW+6}" height="12" rx="3" fill="#e9ecee" stroke="#73808b" stroke-width="1.5"/>
-      <g fill="none" stroke="#48515c" stroke-width="1.2" marker-start="url(#arrow-side)" marker-end="url(#arrow-side)"><path d="M86 ${cy-rollR} V${cy+rollR}"/><path d="M${cx} 265 H${x2}"/></g>
+      <g fill="none" stroke="#48515c" stroke-width="1.2" marker-start="url(#arrow-side)" marker-end="url(#arrow-side)"><path d="M86 ${cy-rollR} V${cy+rollR}"/></g>
       <g fill="none" stroke="#b23434" stroke-width="1.1" marker-start="url(#arrow-red)" marker-end="url(#arrow-red)"><path d="M${cx+4} ${cy-rollR-15} H${x2-4}"/></g>
-      <g stroke="#48515c" stroke-width="1" stroke-dasharray="3 3"><path d="M92 ${cy-rollR} H${cx-8}"/><path d="M92 ${cy+rollR} H${cx-8}"/><path d="M${cx} ${cy+rollR+7} V258"/><path d="M${x2} ${cy+rollR+7} V258"/></g>
+      <g stroke="#48515c" stroke-width="1" stroke-dasharray="3 3"><path d="M92 ${cy-rollR} H${cx-8}"/><path d="M92 ${cy+rollR} H${cx-8}"/></g>
       <g fill="#1f2933" font-family="system-ui, sans-serif" font-size="11" font-weight="700"><text x="17" y="${cy-5}">${t("svg_roll_od")}</text><text x="17" y="${cy+11}">${fmt(od)} mm</text><text x="${(cx+x2)/2}" y="${cy-rollR-23}" text-anchor="middle" fill="#b23434">${t("svg_roll_width")} · ${fmt(width)} mm</text><text x="${(cx+x2)/2}" y="${cy+3}" text-anchor="middle" font-size="8" fill="#3a454e">${t("svg_kraft_paper")}</text><text x="${(cx+x2)/2}" y="286" text-anchor="middle"> </text><text x="${cx+12}" y="${cy-coreR-15}">${t("svg_core_id")} · ${fmt(coreId)} mm</text></g>
     </svg>`;
   }
