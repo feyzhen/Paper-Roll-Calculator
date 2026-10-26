@@ -8,6 +8,7 @@
 
   const i18n = {
     en: {
+      weight_tool: "Paper Weight",
       title: "Paper Roll Calculator",
       eyebrow: "SPECIALTY PAPER TOOLS",
       heading: "Paper Roll Calculator",
@@ -64,6 +65,7 @@
       footer_email: "Email",
     },
     zh: {
+      weight_tool: "纸张重量",
       title: "纸卷计算器",
       eyebrow: "特种纸工具",
       heading: "纸卷计算器",
