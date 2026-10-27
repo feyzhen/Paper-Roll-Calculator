@@ -70,8 +70,10 @@ $$Layers = \lfloor \frac{OD - ID}{2 \times t} \rfloor$$
 ```
 Paper roll calculator/
 ├── index.html   # Page structure & i18n markup
+├── paper-weight.html  # Page structure of paper sheet calculation
 ├── style.css    # Styles & responsive layout
 ├── script.js    # Calculation logic, SVG rendering & translation system
+├── paper-weight.js  # Calculation logic, SVG rendering & translation system
 └── README.md    # Project documentation
 ```
 
