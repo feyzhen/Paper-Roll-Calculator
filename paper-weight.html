@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="纸张克重、面积与重量换算工具">
+  <title>纸张重量计算器 | Paper Weight Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="top-bar">
+    <a class="gh-link" href="index.html"><span>纸卷计算器 / Roll Calculator</span></a>
+    <button class="lang-toggle" id="lang-toggle" type="button">English</button>
+  </nav>
+  <main class="page-shell weight-shell">
+    <header class="hero">
+      <p class="eyebrow" data-i18n="eyebrow">SPECIALTY PAPER TOOLS</p>
+      <h1 data-i18n="heading">纸张重量计算器</h1>
+      <p data-i18n="subheading">根据克重与面积计算纸张重量，也可反向换算克重或面积。</p>
+    </header>
+    <section class="calculator-grid weight-grid" aria-label="纸张重量计算器">
+      <form class="card input-card" id="weight-form">
+        <div class="card-heading"><span>01</span><div><h2 data-i18n="input_title">输入参数</h2><p data-i18n="input_desc">选择要计算的项目，并填写所需参数。</p></div></div>
+        <fieldset class="mode-control weight-modes">
+          <legend data-i18n="mode_legend">计算项目</legend>
+          <label><input type="radio" name="mode" value="weight" checked><span data-i18n="mode_weight">重量</span></label>
+          <label><input type="radio" name="mode" value="gsm"><span data-i18n="mode_gsm">克重</span></label>
+          <label><input type="radio" name="mode" value="area"><span data-i18n="mode_area">面积</span></label>
+        </fieldset>
+        <div class="field-grid weight-fields">
+          <label id="gsm-field"><span data-i18n="f_gsm">克重</span><em>g/m²</em><input id="gsm" type="number" min="0.001" step="any" value="120"></label>
+          <label id="length-field"><span data-i18n="f_length">长度</span><em>mm</em><input id="length" type="number" min="0.001" step="any" value="1000"></label>
+          <label id="width-field"><span data-i18n="f_width">宽度</span><em>mm</em><input id="width" type="number" min="0.001" step="any" value="1000"></label>
+          <label id="weight-field" class="is-hidden"><span data-i18n="f_weight">纸张重量</span><em>g</em><input id="weight" type="number" min="0.001" step="any" value="120"></label>
+        </div>
+        <p class="form-error" id="form-error" role="alert"></p>
+        <div class="button-row"><button type="submit" data-i18n="btn_calc">计算</button><button type="button" class="secondary" id="btn-reset" data-i18n="btn_reset">重置</button></div>
+      </form>
+      <section class="card results-card" aria-live="polite">
+        <div class="card-heading"><span>02</span><div><h2 data-i18n="result_title">换算结果</h2><p data-i18n="result_desc">数值随输入自动更新。</p></div></div>
+        <div class="results-grid weight-results">
+          <div><span data-i18n="r_gsm">克重</span><strong id="result-gsm">—</strong></div>
+          <div><span data-i18n="r_area">面积</span><strong id="result-area">—</strong></div>
+          <div class="weight-highlight"><span data-i18n="r_weight">纸张重量</span><strong id="result-weight">—</strong></div>
+        </div>
+        <p class="note" data-i18n="result_note">纸张重量仅为纸张本身的理论重量，不包含包装或其他材料。</p>
+      </section>
+    </section>
+    <section class="card formula-card">
+      <div class="card-heading"><span>03</span><div><h2 data-i18n="formula_title">计算公式</h2><p data-i18n="formula_desc">面积可由纸张长度乘以宽度得到。</p></div></div>
+      <div class="formula-display"><span data-i18n="formula_gsm">克重 (g/m²) = 重量 (g) ÷ 面积 (m²)</span><span data-i18n="formula_weight">重量 (g) = 克重 (g/m²) × 面积 (m²)</span><span data-i18n="formula_area">面积 (m²) = (长度 (mm) ÷ 1000) × (宽度 (mm) ÷ 1000)</span></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><span data-i18n="footer">纸张重量计算器 · 即开即用，无需安装</span></div></footer>
+  <script src="paper-weight.js"></script>
+</body>
+</html>
