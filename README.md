@@ -8,7 +8,7 @@ A lightweight web tool for calculating specialty paper roll diameter, length, we
 
 ## Features
 
-- **Bidirectional calculation** — calculate OD from known length, or length from known OD
+- **Multi-mode calculation** — calculate OD from length, length from OD, or length from weight
 - **Flexible parameters** — customizable core ID, paper thickness, roll width and GSM
 - **Real-time results** — instant calculation as you type, no submit needed
 - **Cross-section diagrams** — auto-generated cross-section and side view with dimension labels
@@ -33,6 +33,7 @@ python -m http.server 8080
 |------|-------------|
 | Known length → calculate OD | Enter roll length to calculate the wound outer diameter |
 | Known OD → calculate length | Enter target outer diameter to calculate the corresponding roll length |
+| Known weight → calculate length | Enter roll weight, width and GSM to calculate the roll length |
 
 ## Input Parameters
 
@@ -44,16 +45,21 @@ python -m http.server 8080
 | GSM | g/m² | 30 | Grams per square meter |
 | Roll length | m | 10000 | Total unwound paper length |
 | Roll OD | mm | 760.7 | Outer diameter after winding |
+| Roll weight | kg | 127.5 | Total paper weight (excludes core and packaging) |
 
 ## Formulas
 
 **OD (from length):**
 
-$$OD = \sqrt{ID^2 + \frac{4 \times L \times t \times 1000}{\pi}}$$
+$$OD = \sqrt{ID^2 + \frac{4 \times L \times t}{\pi}}$$
 
 **Length (from OD):**
 
-$$L = \frac{\pi \times (OD^2 - ID^2)}{4 \times t \times 1000}$$
+$$L = \frac{\pi \times (OD^2 - ID^2)}{4 \times t}$$
+
+**Length (from weight):**
+
+$$L = \frac{W \times 1000000}{width \times GSM} \quad (m)$$
 
 **Paper weight:**
 
@@ -61,18 +67,21 @@ $$W = L \times \frac{width}{1000} \times \frac{GSM}{1000} \quad (kg)$$
 
 **Theoretical winding layers:**
 
-$$Layers = \lfloor \frac{OD - ID}{2 \times t} \rfloor$$
+$$Layers = \lfloor \frac{(OD - ID) \times 1000}{2 \times t} \rfloor$$
 
-> Where: ID = Core inner diameter (mm), OD = Roll outer diameter (mm), L = Length (m), t = Paper thickness (μm), GSM = Grammage (g/m²)
+> Where: ID = Core inner diameter (mm), OD = Roll outer diameter (mm), L = Length (m), t = Paper thickness (μm), GSM = Grammage (g/m²), W = Weight (kg)
 
 ## Project Structure
 
 ```
 Paper roll calculator/
-├── index.html   # Page structure & i18n markup
-├── style.css    # Styles & responsive layout
-├── script.js    # Calculation logic, SVG rendering & translation system
-└── README.md    # Project documentation
+├── index.html          # Page structure & i18n markup
+├── style.css           # Styles & responsive layout
+├── script.js           # Calculation logic, SVG rendering & translation system
+├── paper-weight.html   # Paper weight calculator page
+├── paper-weight.js     # Weight / GSM / area conversion logic
+├── README.md           # Project documentation (English)
+└── README.zh-CN.md     # Project documentation (Chinese)
 ```
 
 ## Technical Notes
