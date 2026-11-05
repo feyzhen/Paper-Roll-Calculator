@@ -21,7 +21,7 @@
       footer: "Paper Weight Calculator · Ready to use, no installation required", err_positive: "Enter valid values greater than zero.", language: "中文"
     }
   };
-  let lang = localStorage.getItem(languageKey) || "zh";
+  let lang = localStorage.getItem(languageKey) || "en";
   const mode = () => document.querySelector('input[name="mode"]:checked').value;
   const fmt = (value, digits = 3) => new Intl.NumberFormat(lang === "zh" ? "zh-CN" : "en", { maximumFractionDigits: digits }).format(value);
   function applyLanguage() {

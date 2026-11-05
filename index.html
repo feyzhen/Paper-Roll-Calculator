@@ -32,6 +32,7 @@
           <legend data-i18n="mode_legend">Calculation mode</legend>
           <label><input type="radio" name="mode" value="length" checked> <span data-i18n="mode_length">Known length → calculate OD</span></label>
           <label><input type="radio" name="mode" value="od"> <span data-i18n="mode_od">Known OD → calculate length</span></label>
+          <label><input type="radio" name="mode" value="weight"> <span data-i18n="mode_weight">Known weight → calculate length</span></label>
         </fieldset>
 
         <div class="field-grid">
@@ -41,6 +42,7 @@
           <label><span data-i18n="f_gsm">GSM</span> <em>g/m²</em><input id="gsm" type="number" min="1" step="0.1" value="30"></label>
           <label id="length-field"><span data-i18n="f_length">Roll length</span> <em>m</em><input id="length" type="number" min="1" step="1" value="10000"></label>
           <label id="od-field" class="is-hidden"><span data-i18n="f_od">Roll OD</span> <em>mm</em><input id="od" type="number" min="1" step="0.1" value="760.7"></label>
+          <label id="weight-field" class="is-hidden"><span data-i18n="f_weight">Roll weight</span> <em>kg</em><input id="weight" type="number" min="0.001" step="0.1" value="127.5"></label>
         </div>
         <p class="form-error" id="form-error" role="alert"></p>
         <div class="button-row"><button type="submit" data-i18n="btn_calc">Calculate</button><button type="button" class="secondary" id="btn-reset" data-i18n="btn_reset">Reset</button></div>

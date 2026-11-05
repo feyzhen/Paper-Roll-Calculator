@@ -2,7 +2,7 @@
   const $ = (id) => document.getElementById(id);
   const stateKey = "paper-roll-calculator-state-v2";
   const langKey = "paper-roll-calculator-lang";
-  const inputs = ["core-id", "thickness", "width", "gsm", "length", "od"];
+  const inputs = ["core-id", "thickness", "width", "gsm", "length", "od", "weight"];
   const n = (id) => Number.parseFloat($(id).value);
   const fmt = (value, digits = 1) => new Intl.NumberFormat(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits }).format(value);
 
@@ -18,12 +18,14 @@
       mode_legend: "Calculation mode",
       mode_length: "Known length → calculate OD",
       mode_od: "Known OD → calculate length",
+      mode_weight: "Known weight → calculate length",
       f_core_id: "Core ID",
       f_thickness: "Paper thickness",
       f_width: "Roll width",
       f_gsm: "GSM",
       f_length: "Roll length",
       f_od: "Roll OD",
+      f_weight: "Roll weight",
       btn_calc: "Calculate",
       btn_reset: "Reset",
       result_title: "Calculated results",
@@ -46,7 +48,7 @@
       th_weight: "Estimated paper weight",
       svg_roll_od: "ROLL OD",
       svg_roll_width: "ROLL WIDTH",
-      svg_kraft_paper: "PAPER CORE",
+      svg_roll_core: "ROLL CORE",
       svg_core_id: "CORE ID",
       svg_od_half: "OD/2",
       svg_id_half: "ID/2",
@@ -59,6 +61,7 @@
       err_positive: "Please enter positive values for all roll parameters.",
       err_length: "Please enter a positive roll length.",
       err_od: "Roll OD must be larger than the core ID.",
+      err_weight: "Please enter a positive roll weight.",
       lang_label: "中文",
       footer_copy: "\u00a9 2026 Paper Roll Calculator",
       footer_linkedin: "LinkedIn",
@@ -75,12 +78,14 @@
       mode_legend: "计算模式",
       mode_length: "已知长度 → 计算外径",
       mode_od: "已知外径 → 计算长度",
+      mode_weight: "已知重量 → 计算长度",
       f_core_id: "纸芯内径",
       f_thickness: "纸张厚度",
       f_width: "纸卷宽度",
       f_gsm: "克重",
       f_length: "纸卷长度",
       f_od: "纸卷外径",
+      f_weight: "纸卷重量",
       btn_calc: "计算",
       btn_reset: "重置",
       result_title: "计算结果",
@@ -103,7 +108,7 @@
       th_weight: "估算纸张重量",
       svg_roll_od: "纸卷外径",
       svg_roll_width: "纸卷宽度",
-      svg_kraft_paper: "纸卷纸芯",
+      svg_roll_core: "纸卷纸芯",
       svg_core_id: "纸芯内径",
       svg_od_half: "外径/2",
       svg_id_half: "内径/2",
@@ -116,6 +121,7 @@
       err_positive: "请输入所有纸卷参数的正值。",
       err_length: "请输入正的纸卷长度。",
       err_od: "纸卷外径必须大于纸芯内径。",
+      err_weight: "请输入正的纸卷重量。",
       lang_label: "EN",
       footer_copy: "\u00a9 2026 \u7eb8\u5377\u8ba1\u7b97\u5668",
       footer_linkedin: "LinkedIn",
@@ -136,10 +142,11 @@
     $("lang-toggle").textContent = t("lang_label");
   }
 
-  function calcOD(lengthM, coreId, thicknessUm) { return Math.sqrt(coreId ** 2 + (4 * lengthM * (thicknessUm / 1000) * 1000) / Math.PI); }
-  function calcLength(od, coreId, thicknessUm) { return (Math.PI * (od ** 2 - coreId ** 2)) / (4 * (thicknessUm / 1000) * 1000); }
+  function calcOD(lengthM, coreId, thicknessUm) { return Math.sqrt(coreId ** 2 + (4 * lengthM * thicknessUm) / Math.PI); }
+  function calcLength(od, coreId, thicknessUm) { return (Math.PI * (od ** 2 - coreId ** 2)) / (4 * thicknessUm); }
   function calcWeight(lengthM, widthMm, gsm) { return lengthM * (widthMm / 1000) * gsm / 1000; }
-  function calcLayers(od, coreId, thicknessUm) { return Math.floor((od - coreId) / 2 / (thicknessUm / 1000)); }
+  function calcLayers(od, coreId, thicknessUm) { return Math.floor(((od - coreId) * 1000) / (2 * thicknessUm)); }
+  function calcLengthFromWeight(weightKg, widthMm, gsm) { return (weightKg * 1000000) / (widthMm * gsm); }
   function mode() { return document.querySelector('input[name="mode"]:checked').value; }
 
   function dimensionsSvg(od, coreId, width, length) {
@@ -155,13 +162,13 @@
       ${paperLines}
       <ellipse cx="${x2}" cy="${cy}" rx="${rollR*.22}" ry="${rollR}" fill="#9a6434" opacity=".78"/>
       <ellipse cx="${cx}" cy="${cy}" rx="${rollR*.23}" ry="${rollR}" fill="#d8ac73" stroke="#805127" stroke-width="2"/>
-      <ellipse cx="${cx}" cy="${cy}" rx="${coreR*.25}" ry="${coreR}" fill="url(#core-side)" stroke="#655345" stroke-width="1.5"/>
+      <ellipse cx="${cx}" cy="${cy}" rx="${coreR*.25}" ry="${coreR}" fill="url(#core-side)" stroke="#655345" stroke-width="1.5" stroke-dasharray="5 4"/>
       <ellipse cx="${cx}" cy="${cy}" rx="${Math.max(4,coreR*.12)}" ry="${Math.max(11,coreR*.48)}" fill="#3d342d"/>
-      <rect x="${cx-3}" y="${cy-6}" width="${bodyW+6}" height="12" rx="3" fill="#e9ecee" stroke="#73808b" stroke-width="1.5"/>
+      <rect x="${cx-3}" y="${cy-6}" width="${bodyW+6}" height="12" rx="3" fill="#e9ecee" stroke="#73808b" stroke-width="1.5" stroke-dasharray="5 4"/>
       <g fill="none" stroke="#48515c" stroke-width="1.2" marker-start="url(#arrow-side)" marker-end="url(#arrow-side)"><path d="M86 ${cy-rollR} V${cy+rollR}"/></g>
       <g fill="none" stroke="#b23434" stroke-width="1.1" marker-start="url(#arrow-red)" marker-end="url(#arrow-red)"><path d="M${cx+4} ${cy-rollR-15} H${x2-4}"/></g>
       <g stroke="#48515c" stroke-width="1" stroke-dasharray="3 3"><path d="M92 ${cy-rollR} H${cx-8}"/><path d="M92 ${cy+rollR} H${cx-8}"/></g>
-      <g fill="#1f2933" font-family="system-ui, sans-serif" font-size="11" font-weight="700"><text x="17" y="${cy-5}">${t("svg_roll_od")}</text><text x="17" y="${cy+11}">${fmt(od)} mm</text><text x="${(cx+x2)/2}" y="${cy-rollR-23}" text-anchor="middle" fill="#b23434">${t("svg_roll_width")} · ${fmt(width)} mm</text><text x="${(cx+x2)/2}" y="${cy+3}" text-anchor="middle" font-size="8" fill="#3a454e">${t("svg_kraft_paper")}</text><text x="${(cx+x2)/2}" y="286" text-anchor="middle"> </text><text x="${cx+12}" y="${cy-coreR-15}">${t("svg_core_id")} · ${fmt(coreId)} mm</text></g>
+      <g fill="#1f2933" font-family="system-ui, sans-serif" font-size="11" font-weight="700"><text x="17" y="${cy-5}">${t("svg_roll_od")}</text><text x="17" y="${cy+11}">${fmt(od)} mm</text><text x="${(cx+x2)/2}" y="${cy-rollR-23}" text-anchor="middle" fill="#b23434">${t("svg_roll_width")} · ${fmt(width)} mm</text><text x="${(cx+x2)/2}" y="${cy+3}" text-anchor="middle" font-size="8" fill="#3a454e">${t("svg_roll_core")}</text><text x="${cx+12}" y="${cy-coreR-15}">${t("svg_core_id")} · ${fmt(coreId)} mm</text></g>
     </svg>`;
   }
   function crossSectionSvg(od, coreId) {
@@ -176,14 +183,15 @@
   function renderTable(coreId, thickness, width, gsm) { $("comparison-body").innerHTML=[600,650,700,750,800].map(od=>{ const length=calcLength(od,coreId,thickness); const weight=calcWeight(length,width,gsm); return `<tr><td>${od} mm</td><td>${fmt(length,0)} m</td><td>${fmt(weight,1)} kg</td></tr>`; }).join(""); }
   function save() { const data={mode:mode()}; inputs.forEach(id=>data[id]=$(id).value); localStorage.setItem(stateKey,JSON.stringify(data)); }
   function calculate() {
-    const coreId=n("core-id"), thickness=n("thickness"), width=n("width"), gsm=n("gsm"); let length=n("length"), od=n("od");
+    const coreId=n("core-id"), thickness=n("thickness"), width=n("width"), gsm=n("gsm"); let length=n("length"), od=n("od"), weight=n("weight");
     const valid=[coreId,thickness,width,gsm].every(v=>Number.isFinite(v)&&v>0);
     if (!valid) { $("form-error").textContent=t("err_positive"); return; }
     if(mode()==="length") { if(!(length>0)) { $("form-error").textContent=t("err_length"); return; } od=calcOD(length,coreId,thickness); $("od").value=od.toFixed(1); }
-    else { if(!(od>coreId)) { $("form-error").textContent=t("err_od"); return; } length=calcLength(od,coreId,thickness); $("length").value=length.toFixed(1); }
+    else if(mode()==="od") { if(!(od>coreId)) { $("form-error").textContent=t("err_od"); return; } length=calcLength(od,coreId,thickness); $("length").value=length.toFixed(1); }
+    else { if(!(weight>0)) { $("form-error").textContent=t("err_weight"); return; } length=calcLengthFromWeight(weight,width,gsm); $("length").value=length.toFixed(1); od=calcOD(length,coreId,thickness); $("od").value=od.toFixed(1); }
     $("form-error").textContent=""; $("result-od").textContent=`${fmt(od)} mm`; $("result-length").textContent=`${fmt(length)} m`; $("result-weight").textContent=`${fmt(calcWeight(length,width,gsm),2)} kg`; $("result-layers").textContent=calcLayers(od,coreId,thickness).toLocaleString(); renderVisuals(od,coreId,width,length); renderSpecs(od,coreId,thickness,width,length,gsm); renderTable(coreId,thickness,width,gsm); save();
   }
-  function updateMode() { const byLength=mode()==="length"; $("length-field").classList.toggle("is-hidden",!byLength); $("od-field").classList.toggle("is-hidden",byLength); calculate(); }
+  function updateMode() { const m=mode(); $("length-field").classList.toggle("is-hidden",m!=="length"); $("od-field").classList.toggle("is-hidden",m!=="od"); $("weight-field").classList.toggle("is-hidden",m!=="weight"); calculate(); }
   function restore() { try { const saved=JSON.parse(localStorage.getItem(stateKey)); if(!saved)return; inputs.forEach(id=>{if(saved[id]!=null)$(id).value=saved[id];}); const radio=document.querySelector(`input[name="mode"][value="${saved.mode}"]`); if(radio)radio.checked=true; } catch {} }
 
   applyI18n();
@@ -200,5 +208,5 @@
   $("calculator-form").addEventListener("submit",e=>{e.preventDefault();calculate();});
   document.querySelectorAll('input[name="mode"]').forEach(x=>x.addEventListener("change",updateMode));
   inputs.forEach(id=>$(id).addEventListener("input",()=>{clearTimeout($(id)._timer);$(id)._timer=setTimeout(calculate,250);}));
-  $("btn-reset").addEventListener("click",()=>{localStorage.removeItem(stateKey);inputs.forEach(id=>{clearTimeout($(id)._timer);});$("calculator-form").reset();$("core-id").value=76;$("thickness").value=45;$("width").value=425;$("gsm").value=30;$("length").value=10000;$("od").value=760.7;$("form-error").textContent="";updateMode();});
+  $("btn-reset").addEventListener("click",()=>{localStorage.removeItem(stateKey);inputs.forEach(id=>{clearTimeout($(id)._timer);});$("calculator-form").reset();$("core-id").value=76;$("thickness").value=45;$("width").value=425;$("gsm").value=30;$("length").value=10000;$("od").value=760.7;$("weight").value=127.5;$("form-error").textContent="";updateMode();});
 })();

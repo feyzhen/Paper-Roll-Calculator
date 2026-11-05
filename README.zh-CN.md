@@ -8,7 +8,7 @@
 
 ## 功能特性
 
-- **双向计算** — 已知长度求外径，或已知外径求长度
+- **多模式计算** — 已知长度求外径、已知外径求长度，或已知重量求长度
 - **参数灵活** — 支持自定义纸芯内径、纸张厚度、纸卷宽度、克重
 - **实时结果** — 输入即算，无需手动提交
 - **截面示意图** — 自动生成截面图与侧视图，标注关键尺寸
@@ -33,6 +33,7 @@ python -m http.server 8080
 |------|------|
 | 已知长度 → 计算外径 | 输入纸卷长度，自动算出卷绕后的外径 |
 | 已知外径 → 计算长度 | 输入目标外径，自动算出对应的纸卷长度 |
+| 已知重量 → 计算长度 | 输入纸卷重量、宽度和克重，自动算出纸卷长度 |
 
 ## 输入参数
 
@@ -44,16 +45,21 @@ python -m http.server 8080
 | 克重 | g/m² | 30 | 每平方米纸张的克重 |
 | 纸卷长度 | m | 10000 | 纸张展开总长度 |
 | 纸卷外径 | mm | 760.7 | 卷绕后的外径 |
+| 纸卷重量 | kg | 127.5 | 纸张总重量（不含纸芯和包装） |
 
 ## 计算公式
 
 **外径（由长度推算）：**
 
-$$OD = \sqrt{ID^2 + \frac{4 \times L \times t \times 1000}{\pi}}$$
+$$OD = \sqrt{ID^2 + \frac{4 \times L \times t}{\pi}}$$
 
 **长度（由外径推算）：**
 
-$$L = \frac{\pi \times (OD^2 - ID^2)}{4 \times t \times 1000}$$
+$$L = \frac{\pi \times (OD^2 - ID^2)}{4 \times t}$$
+
+**长度（由重量推算）：**
+
+$$L = \frac{W \times 1000000}{width \times GSM} \quad (m)$$
 
 **纸张重量：**
 
@@ -61,18 +67,21 @@ $$W = L \times \frac{width}{1000} \times \frac{GSM}{1000} \quad (kg)$$
 
 **理论卷绕层数：**
 
-$$Layers = \lfloor \frac{OD - ID}{2 \times t} \rfloor$$
+$$Layers = \lfloor \frac{(OD - ID) \times 1000}{2 \times t} \rfloor$$
 
-> 其中：ID = 纸芯内径 (mm)，OD = 纸卷外径 (mm)，L = 长度 (m)，t = 纸张厚度 (μm)，GSM = 克重 (g/m²)
+> 其中：ID = 纸芯内径 (mm)，OD = 纸卷外径 (mm)，L = 长度 (m)，t = 纸张厚度 (μm)，GSM = 克重 (g/m²)，W = 重量 (kg)
 
 ## 项目结构
 
 ```
 Paper roll calculator/
-├── index.html   # 页面结构与 i18n 标记
-├── style.css    # 样式与响应式布局
-├── script.js    # 计算逻辑、SVG 绘图与翻译系统
-└── README.md    # 项目说明
+├── index.html          # 页面结构与 i18n 标记
+├── style.css           # 样式与响应式布局
+├── script.js           # 计算逻辑、SVG 绘图与翻译系统
+├── paper-weight.html   # 纸张重量计算器页面
+├── paper-weight.js     # 重量 / 克重 / 面积换算逻辑
+├── README.md           # 项目说明（英文）
+└── README.zh-CN.md     # 项目说明（中文）
 ```
 
 ## 技术要点
