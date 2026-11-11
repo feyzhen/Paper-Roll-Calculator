@@ -28,12 +28,15 @@
       f_weight: "Roll weight",
       btn_calc: "Calculate",
       btn_reset: "Reset",
+      btn_copy: "Copy",
       result_title: "Calculated results",
       result_desc: "Theoretical values based on your inputs.",
       r_od: "Roll OD",
       r_length: "Roll length",
       r_weight: "Paper weight",
       r_layers: "Theoretical layers",
+      copy_success: "Copied",
+      copy_fail: "Copy failed",
       result_note: "Weight excludes the paper core and packaging. Actual production values can vary with winding tension and paper compression.",
       visual_title: "Roll cross-section",
       visual_desc: "Schematic view only; dimensions update with your current calculation.",
@@ -88,12 +91,15 @@
       f_weight: "纸卷重量",
       btn_calc: "计算",
       btn_reset: "重置",
+      btn_copy: "复制",
       result_title: "计算结果",
       result_desc: "基于输入参数的理论值。",
       r_od: "纸卷外径",
       r_length: "纸卷长度",
       r_weight: "纸张重量",
       r_layers: "理论层数",
+      copy_success: "已复制",
+      copy_fail: "复制失败",
       result_note: "重量不含纸芯和包装。实际生产值会因卷绕张力和纸张压缩而有所不同。",
       visual_title: "纸卷截面",
       visual_desc: "仅为示意图；尺寸随当前计算结果更新。",
@@ -130,6 +136,7 @@
   };
 
   let lang = localStorage.getItem(langKey) || "en";
+  let currentResult = null;
   const t = (key) => (i18n[lang] || i18n.en)[key] || key;
 
   function applyI18n() {
@@ -189,10 +196,32 @@
     if(mode()==="length") { if(!(length>0)) { $("form-error").textContent=t("err_length"); return; } od=calcOD(length,coreId,thickness); $("od").value=od.toFixed(1); }
     else if(mode()==="od") { if(!(od>coreId)) { $("form-error").textContent=t("err_od"); return; } length=calcLength(od,coreId,thickness); $("length").value=length.toFixed(1); }
     else { if(!(weight>0)) { $("form-error").textContent=t("err_weight"); return; } length=calcLengthFromWeight(weight,width,gsm); $("length").value=length.toFixed(1); od=calcOD(length,coreId,thickness); $("od").value=od.toFixed(1); }
-    $("form-error").textContent=""; $("result-od").textContent=`${fmt(od)} mm`; $("result-length").textContent=`${fmt(length)} m`; $("result-weight").textContent=`${fmt(calcWeight(length,width,gsm),2)} kg`; $("result-layers").textContent=calcLayers(od,coreId,thickness).toLocaleString(); renderVisuals(od,coreId,width,length); renderSpecs(od,coreId,thickness,width,length,gsm); renderTable(coreId,thickness,width,gsm); save();
+    $("form-error").textContent=""; const weightKg=calcWeight(length,width,gsm), layers=calcLayers(od,coreId,thickness); currentResult={od,length,weight:weightKg,layers,coreId,thickness,width,gsm}; $("result-od").textContent=`${fmt(od)} mm`; $("result-length").textContent=`${fmt(length)} m`; $("result-weight").textContent=`${fmt(weightKg,2)} kg`; $("result-layers").textContent=layers.toLocaleString(); renderVisuals(od,coreId,width,length); renderSpecs(od,coreId,thickness,width,length,gsm); renderTable(coreId,thickness,width,gsm); save();
   }
   function updateMode() { const m=mode(); $("length-field").classList.toggle("is-hidden",m!=="length"); $("od-field").classList.toggle("is-hidden",m!=="od"); $("weight-field").classList.toggle("is-hidden",m!=="weight"); calculate(); }
   function restore() { try { const saved=JSON.parse(localStorage.getItem(stateKey)); if(!saved)return; inputs.forEach(id=>{if(saved[id]!=null)$(id).value=saved[id];}); const radio=document.querySelector(`input[name="mode"][value="${saved.mode}"]`); if(radio)radio.checked=true; } catch {} }
+  function buildCopyText(r) {
+    return [
+      `${t("f_core_id")}: ${fmt(r.coreId)} mm`,
+      `${t("f_thickness")}: ${fmt(r.thickness)} μm`,
+      `${t("f_width")}: ${fmt(r.width)} mm`,
+      `${t("f_gsm")}: ${fmt(r.gsm)} g/m²`,
+      `${t("r_od")}: ${fmt(r.od)} mm`,
+      `${t("r_length")}: ${fmt(r.length)} m`,
+      `${t("r_weight")}: ${fmt(r.weight, 2)} kg`,
+      `${t("r_layers")}: ${fmt(r.layers, 0)}`,
+    ].join("\n");
+  }
+  async function copyText(text) {
+    try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; } } catch (e) {}
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "-9999px"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    let ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+    return ok;
+  }
 
   applyI18n();
   restore();
@@ -209,4 +238,13 @@
   document.querySelectorAll('input[name="mode"]').forEach(x=>x.addEventListener("change",updateMode));
   inputs.forEach(id=>$(id).addEventListener("input",()=>{clearTimeout($(id)._timer);$(id)._timer=setTimeout(calculate,250);}));
   $("btn-reset").addEventListener("click",()=>{localStorage.removeItem(stateKey);inputs.forEach(id=>{clearTimeout($(id)._timer);});$("calculator-form").reset();$("core-id").value=76;$("thickness").value=45;$("width").value=425;$("gsm").value=30;$("length").value=10000;$("od").value=760.7;$("weight").value=127.5;$("form-error").textContent="";updateMode();});
+  $("btn-copy").addEventListener("click", async () => {
+    if (!currentResult) return;
+    const ok = await copyText(buildCopyText(currentResult));
+    const fb = $("copy-feedback");
+    fb.textContent = ok ? t("copy_success") : t("copy_fail");
+    fb.classList.toggle("is-error", !ok);
+    clearTimeout(fb._timer);
+    fb._timer = setTimeout(() => { fb.textContent = ""; fb.classList.remove("is-error"); }, 2000);
+  });
 })();
